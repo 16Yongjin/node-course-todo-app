@@ -22,5 +22,7 @@ app.post('/todos', (req, res) => {
 });
 
 app.listen(3000, () => {
-    console.log('Statrf on Port 3000');
+    console.log('Statr on Port 3000');
 });
+
+module.exports = {app};
