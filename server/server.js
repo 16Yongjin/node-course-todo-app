@@ -8,6 +8,7 @@ var {User} = require('./models/user');
 const {ObjectID} = require('mongodb');
 
 var app = express();
+const port = process.env.PORT || 3000;
 
 app.use(bodyParser.json());
 
@@ -48,8 +49,8 @@ app.get('/todos/:id', (req, res) => {
     });
 })
 
-app.listen(3000, () => {
-    console.log('Statr on Port 3000');
+app.listen(port, () => {
+    console.log(`Statred up at Port ${port}`);
 });
 
 module.exports = {app};
