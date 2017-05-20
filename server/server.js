@@ -1,3 +1,5 @@
+require('./config/config.js');
+
 const _ = require('lodash');
 var express = require('express');
 var bodyParser = require('body-parser');
@@ -9,9 +11,11 @@ var {User} = require('./models/user');
 const {ObjectID} = require('mongodb');
 
 var app = express();
-const port = process.env.PORT || 3000;
+const port = process.env.PORT;
 
 app.use(bodyParser.json());
+
+/* ======== Save a Todo ======== */
 
 app.post('/todos', (req, res) => {
     var todo = new Todo({
@@ -25,6 +29,8 @@ app.post('/todos', (req, res) => {
     })
 });
 
+/* ======== Get All Todos ======== */
+
 app.get('/todos', (req, res) => {
     Todo.find().then((todos) => {
         res.send({todos});
@@ -33,22 +39,27 @@ app.get('/todos', (req, res) => {
     });
 });
 
+/* ======== Get Specific Todo ======== */
+
 app.get('/todos/:id', (req, res) => {
     var id = req.params.id;
 
-    if (!ObjectID.isValid(id)) {
+    if (!ObjectID.isValid(id)) { // if id is wrong
         return res.status(404).send('¯\_(ツ)_/¯');
     }
 
     Todo.findById(req.params.id).then((todo) => {
-        if(!todo) {
+        if(!todo) { // if id not exist
             return res.status(404).send('Todo not found');
         }
+
         res.send({todo});
     }).catch((e) => {
         res.status(400).send();
     });
 });
+
+/* ======== Delete a Todo ======== */
 
 app.delete('/todos/:id', (req, res) => {
     var id = req.params.id;
@@ -61,23 +72,27 @@ app.delete('/todos/:id', (req, res) => {
         if(!todo) {
             return res.status(404).send('Todo not found');
         }
+
         res.send({todo});
     },(e) => {
         res.status(400).send(e);
     })
 });
 
+/* ======== Update a Todo ======== */
+
+
 app.patch('/todos/:id', (req, res) => {
     var id = req.params.id;
-    var body = _.pick(req.body, ['text', 'completed']);
+    var body = _.pick(req.body, ['text', 'completed']); //Get update info.
 
 
     if (!ObjectID.isValid(id)) {
         return res.status(404).send('¯\_(ツ)_/¯');
     }
 
-    if (_.isBoolean(body.completed) && body.completed) {
-        body.completedAt = new Date().getTime();
+    if (_.isBoolean(body.completed) && body.completed) { // update completed Date
+        body.completedAt = new Date().getTime(); //posix time
     } else {
         body.completed = false;
         body.completedAt = null;
