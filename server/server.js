@@ -7,6 +7,7 @@ var bodyParser = require('body-parser');
 var {mongoose} = require('./db/mongoose');
 var {Todo} = require('./models/todo');
 var {User} = require('./models/user');
+var {authenticate} = require('./middleware/authenticate');
 
 const {ObjectID} = require('mongodb');
 
@@ -21,9 +22,6 @@ app.post('/todos', (req, res) => {
     var todo = new Todo({
         text: req.body.text
     });
-
-    User.findByToken
-    user.generateAuthToken
 
     todo.save().then((doc) => {
         res.send(doc);
@@ -128,6 +126,12 @@ app.post('/users', (req, res) => {
     })
 
 });
+
+/* ======== AUTH USER ======== */
+app.get('/users/me', authenticate, (req, res) => {
+    res.send(req.user);
+});
+
 
 
 
